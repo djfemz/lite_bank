@@ -21,8 +21,8 @@ class LiteBankApplicationTests {
     void testCanConnectToDatabase(){
         try(HikariDataSource hikariDataSource = new HikariDataSource()){
             hikariDataSource.setJdbcUrl("jdbc:postgresql://localhost:5432/lite_bank");
-            hikariDataSource.setUsername("postgres");
-            hikariDataSource.setPassword("password");
+            hikariDataSource.setUsername("");
+            hikariDataSource.setPassword("");
             Connection connection = hikariDataSource.getConnection();
 
             assertNotNull(connection);

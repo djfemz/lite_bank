@@ -6,37 +6,40 @@ import dev.litebank.dto.responses.TransactionResponse;
 import dev.litebank.model.Transaction;
 import dev.litebank.repository.TransactionRepository;
 import lombok.AllArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 @AllArgsConstructor
 public class TransactionServiceImpl implements TransactionService{
 
     private final TransactionRepository transactionRepository;
-
+    private final ModelMapper modelMapper;
 
     @Override
     public CreateTransactionResponse create(CreateTransactionRequest transactionRequest) {
-        Transaction transaction = new Transaction();
-        transaction.setAmount(transactionRequest.getAmount());
-        transaction.setTransactionType(transactionRequest.getTransactionType());
-        transaction.setAccountNumber(transactionRequest.getAccountNumber());
-        transaction = transactionRepository.save(transaction);
+        Transaction transaction = transactionRepository.save(createTransactionFrom(transactionRequest));
+        return buildTransactionResponseFrom(transaction);
+    }
 
-        CreateTransactionResponse createTransactionResponse = new CreateTransactionResponse();
-        createTransactionResponse.setId(transaction.getId());
-        createTransactionResponse.setAmount(transactionRequest.getAmount().toString());
-        createTransactionResponse.setTransactionType(transactionRequest.getTransactionType().toString());
+    private CreateTransactionResponse buildTransactionResponseFrom(Transaction transaction) {
+        return modelMapper.map(transaction, CreateTransactionResponse.class);
+    }
 
-        return createTransactionResponse;
+    private Transaction createTransactionFrom(CreateTransactionRequest transactionRequest) {
+        return modelMapper.map(transactionRequest, Transaction.class);
     }
 
     @Override
     public TransactionResponse getTransactionById(String id) {
         Transaction transaction = transactionRepository.findById(id).orElseThrow(()-> new RuntimeException("Transaction not found"));
+        return modelMapper.map(transaction, TransactionResponse.class);
+    }
 
-        TransactionResponse transactionResponse = new TransactionResponse();
-        transactionResponse.setAmount(transaction.getAmount().toString());
-        return transactionResponse;
+    @Override
+    public List<TransactionResponse> getTransactionsFor(String accountNumber) {
+        return List.of();
     }
 }
