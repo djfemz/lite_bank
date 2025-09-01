@@ -11,7 +11,4 @@ public class LiteBankApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(LiteBankApplication.class, args);
 	}
-
-
-
 }

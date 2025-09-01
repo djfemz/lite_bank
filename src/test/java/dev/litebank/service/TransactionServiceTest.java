@@ -7,12 +7,12 @@ import dev.litebank.dto.responses.CreateTransactionResponse;
 import dev.litebank.dto.responses.TransactionResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.jdbc.Sql;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
@@ -25,7 +25,7 @@ public class TransactionServiceTest {
     private TransactionService transactionService;
 
     @Test
-    void testTransactionService(){
+    void testCreateTransaction(){
         CreateTransactionRequest transactionRequest = new CreateTransactionRequest();
         transactionRequest.setTransactionType(TransactionType.CREDIT);
         transactionRequest.setAmount(new BigDecimal("20000.00"));
@@ -38,6 +38,15 @@ public class TransactionServiceTest {
         assertThat(transaction).isNotNull();
         assertThat(transaction.getAmount()).isEqualTo(transactionRequest.getAmount().toString());
 
+    }
+
+    @Test
+    @Sql(scripts = {"/db/data.sql"})
+    void testCanGetTransactionsByAccountNumber(){
+        List<TransactionResponse> transactions =
+                transactionService.getTransactionsFor("0123456789");
+        assertThat(transactions).isNotNull();
+        assertThat(transactions.size()).isEqualTo(5);
     }
 
 }

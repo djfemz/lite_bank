@@ -6,13 +6,23 @@ import dev.litebank.dto.responses.TransactionResponse;
 import dev.litebank.model.Transaction;
 import dev.litebank.repository.TransactionRepository;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
+import org.modelmapper.TypeToken;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.lang.reflect.Type;
 import java.util.List;
+
+import static dev.litebank.util.ProjectUtil.DEFAULT_PAGE_NUMBER;
+import static dev.litebank.util.ProjectUtil.DEFAULT_PAGE_SIZE;
 
 @Service
 @AllArgsConstructor
+@Slf4j
 public class TransactionServiceImpl implements TransactionService{
 
     private final TransactionRepository transactionRepository;
@@ -40,6 +50,11 @@ public class TransactionServiceImpl implements TransactionService{
 
     @Override
     public List<TransactionResponse> getTransactionsFor(String accountNumber) {
-        return List.of();
+        List<Transaction> transactions =
+                transactionRepository.findTransactionByAccountNumber(accountNumber);
+        System.out.println("Transactions: " + transactions);
+        Type listType = new TypeToken<List<TransactionResponse>>() {}.getType();
+        return modelMapper.map(transactions, listType);
     }
+
 }

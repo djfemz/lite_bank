@@ -6,17 +6,21 @@ import dev.litebank.dto.responses.DepositResponse;
 import dev.litebank.dto.PaymentMethod;
 import dev.litebank.dto.TransactionStatus;
 import dev.litebank.dto.responses.ViewAccountResponse;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.jdbc.Sql;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
+@Sql(scripts = {"/db/data.sql"})
+@Slf4j
 public class AccountServiceTest {
 
     @Autowired
@@ -24,8 +28,7 @@ public class AccountServiceTest {
 
 
     @Test
-    @Sql(scripts = {"/db/data.sql"})
-    void testCanDeposit(){
+    void testCanDeposit() throws IOException {
         DepositRequest depositRequest = new DepositRequest();
         depositRequest.setPaymentMethod(PaymentMethod.CARD);
         depositRequest.setAccountNumber("0123456789");
@@ -37,9 +40,17 @@ public class AccountServiceTest {
 
     @Test
     void testCanViewAccount(){
-        ViewAccountResponse response = accountService.viewDetailsFor("0123456789");
+        ViewAccountResponse response =
+                accountService.viewDetailsFor("0123456789");
         assertThat(response).isNotNull();
-        assertThat(response.getBalance()).isEqualTo("20000");
+        assertThat(response.getBalance()).isEqualTo(new BigDecimal("370000.00").toString());
     }
 
+    @Test
+    void testGenerateAccountNumber() {
+        String accountNumber = AccountServiceImpl.generateAccountNumber();
+        log.info("Generated account number: {}", accountNumber);
+        assertThat(accountNumber.length())
+                .isEqualTo(10);
+    }
 }
