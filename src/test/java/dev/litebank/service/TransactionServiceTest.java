@@ -34,7 +34,6 @@ public class TransactionServiceTest {
         CreateTransactionResponse transactionResponse = transactionService.create(transactionRequest);
         assertNotNull(transactionResponse);
         TransactionResponse transaction = transactionService.getTransactionById(transactionResponse.getId());
-        log.info("transaction response--> {}", transaction);
         assertThat(transaction).isNotNull();
         assertThat(transaction.getAmount()).isEqualTo(transactionRequest.getAmount().toString());
 

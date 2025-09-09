@@ -49,7 +49,6 @@ public class AccountServiceTest {
     @Test
     void testGenerateAccountNumber() {
         String accountNumber = AccountServiceImpl.generateAccountNumber();
-        log.info("Generated account number: {}", accountNumber);
         assertThat(accountNumber.length())
                 .isEqualTo(10);
     }

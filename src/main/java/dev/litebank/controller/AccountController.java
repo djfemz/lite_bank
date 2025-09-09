@@ -6,7 +6,9 @@ import dev.litebank.dto.responses.DepositResponse;
 import dev.litebank.dto.responses.ErrorResponse;
 import dev.litebank.exception.AccountNotFoundException;
 import dev.litebank.service.AccountService;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -19,13 +21,13 @@ import java.io.IOException;
 @RestController
 @RequestMapping("/api/v1/account")
 @AllArgsConstructor
+@Slf4j
 public class AccountController  {
-
 
     private final AccountService accountService;
 
     @PostMapping
-    public ResponseEntity<?> deposit(@RequestBody DepositRequest depositRequest) {
+    public ResponseEntity<?> deposit(@RequestBody @Valid DepositRequest depositRequest) {
         try {
             DepositResponse response = accountService.deposit(depositRequest);
             return ResponseEntity.status(HttpStatus.CREATED).body(response);

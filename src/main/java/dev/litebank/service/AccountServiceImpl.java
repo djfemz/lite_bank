@@ -78,6 +78,13 @@ public class AccountServiceImpl implements AccountService {
         return viewAccountResponse;
     }
 
+    @Override
+    public AccountResponse getByUsername(String username) {
+        Account account = accountRepository.findByUsername(username)
+                                           .orElseThrow(()-> new AccountNotFoundException("account not found"));
+        return modelMapper.map(account, AccountResponse.class);
+    }
+
     private static TransactionResponse computeAccountBalanceFrom(TransactionResponse a, TransactionResponse b, TransactionResponse transactionResponse) {
         BigDecimal total = ZERO;
         if (b.getTransactionType() == TransactionType.DEPOSIT)
