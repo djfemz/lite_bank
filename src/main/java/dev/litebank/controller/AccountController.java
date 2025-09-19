@@ -38,7 +38,7 @@ public class AccountController  {
         }
     }
 
-    @PostMapping("/create")
+    @PostMapping("/new")
     public ResponseEntity<?> createAccount(@RequestBody CreateAccountRequest createAccountRequest) {
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(accountService.create(createAccountRequest));
